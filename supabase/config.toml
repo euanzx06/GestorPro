@@ -2,3 +2,6 @@ project_id = "wevqmjojguidarlfwcib"
 
 [functions.categorize-transaction]
 verify_jwt = true
+
+[remotes.production]
+project_id = "wevqmjojguidarlfwcib"
