@@ -1,0 +1,4 @@
+project_id = "gestorpro-pessoal"
+
+[functions.categorize-transaction]
+verify_jwt = true

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>GestorPro — visão geral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="personal.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script>
+  <script defer src="https://cdn.pluggy.ai/pluggy-connect/v2.8.2/pluggy-connect.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio" aria-label="GestorPro início"><span class="brand-mark">G</span><span>gestor<span class="brand-light">pro</span></span></a>
+      <div class="workspace-switch"><span class="workspace-icon">R$</span><span><b>Minhas finanças</b><small>Uso pessoal</small></span><span class="chevron">⌄</span></div>
+      <div class="nav-label">MENU PRINCIPAL</div>
+      <nav class="main-nav" aria-label="Menu principal">
+        <button class="nav-item active" data-page="inicio"><span class="nav-icon">◫</span>Visão geral</button>
+        <button class="nav-item" data-page="contas"><span class="nav-icon">▣</span>Minhas contas <span class="nav-count">3</span></button>
+        <button class="nav-item" data-page="lancamentos"><span class="nav-icon">⇄</span>Lançamentos</button>
+        <button class="nav-item" data-page="assistente"><span class="nav-icon">✦</span>Assistente</button>
+        <button class="nav-item" data-page="openfinance"><span class="nav-icon">↗</span>Open Finance</button>
+        <button class="nav-item" data-page="planejamento"><span class="nav-icon">◎</span>Caixinhas e metas</button>
+        <button class="nav-item" data-page="relatorios"><span class="nav-icon">▥</span>Análise financeira</button>
+      </nav>
+      <div class="nav-label tools-label">PREFERÊNCIAS</div>
+      <nav class="main-nav"><button class="nav-item" data-page="configuracoes"><span class="nav-icon">⚙</span>Configurações</button></nav>
+      <div class="sidebar-bottom"><div class="help-card"><span class="help-icon">✦</span><b>Organize com calma</b><p>Um passo de cada vez para entender seu dinheiro.</p><button data-page="ajuda">Acessar central <span>→</span></button></div><button class="profile"><span class="avatar">EU</span><span><b>Meu perfil</b><small>Conta pessoal</small></span><span class="more">···</span></button></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar"><button class="mobile-menu" id="mobile-menu" aria-label="Abrir menu">☰</button><div class="breadcrumbs">Meu financeiro <span>/</span> <b id="breadcrumb">Visão geral</b></div><div class="top-actions"><button class="icon-button" aria-label="Notificações">♧<i></i></button><span class="top-divider"></span><span class="top-date" id="today"></span><span class="avatar top-avatar">EU</span></div></header>
+      <div class="page-wrap" id="page-content"></div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="modal" class="modal"><form method="dialog" id="modal-form"><button class="modal-close" type="button" aria-label="Fechar">×</button><div id="modal-content"></div></form></dialog>
+</body>
+</html>
