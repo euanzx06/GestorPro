@@ -187,7 +187,10 @@ export async function handleRequest(request, response) {
       if (!/^[a-zA-Z0-9-]{8,100}$/.test(id)) return json(response, 400, { error: 'O ID da conexão Pluggy não parece válido.' });
       const item = await pluggy(`/items/${encodeURIComponent(id)}`);
       const expectedClientUserId = user?.id || 'gestorpro-local-user';
-      if (String(item.clientUserId || '') !== String(expectedClientUserId)) return json(response, 403, { error: 'Essa conexão não está vinculada à sua conta GestorPro. Peça à Pluggy o ID do item vinculado ao GestorPro.' });
+      const itemClientUserId = String(item.clientUserId || '');
+      const connectorName = String(item.connector?.name || item.connectorName || '');
+      const personalMeuPluggyItem = !itemClientUserId && /meu\s?pluggy/i.test(connectorName);
+      if (itemClientUserId !== String(expectedClientUserId) && !personalMeuPluggyItem) return json(response, 403, { error: 'Essa conexão não está vinculada à sua conta GestorPro. Peça à Pluggy o ID do item MeuPluggy da aplicação configurada no GestorPro.' });
       return json(response, 200, { id: item.id, institution: item.connector?.name || item.connectorName || 'Conexão Pluggy', status: item.status || 'UNKNOWN' });
     }
     if (request.method === 'GET' && url.pathname === '/api/openfinance/accounts') {
