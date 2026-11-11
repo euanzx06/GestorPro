@@ -1,5 +1,9 @@
 project_id = "wevqmjojguidarlfwcib"
 
+[auth]
+site_url = "https://gestor-pro-red.vercel.app"
+additional_redirect_urls = ["https://gestor-pro-red.vercel.app"]
+
 [functions.categorize-transaction]
 verify_jwt = true
 
