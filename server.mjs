@@ -116,6 +116,22 @@ async function listInvestments(itemId) {
   }
   return { results: investments };
 }
+async function listItemsForUser(clientUserId) {
+  const results = [];
+  let path = `/v2/items?clientUserId=${encodeURIComponent(clientUserId)}`;
+  const visited = new Set();
+  for (let page = 0; path && page < 10; page += 1) {
+    if (visited.has(path)) throw new Error('A Pluggy repetiu o cursor de conexões.');
+    visited.add(path);
+    const data = await pluggy(path);
+    if (Array.isArray(data.results)) results.push(...data.results);
+    if (!data.next) break;
+    const nextUrl = new URL(data.next, `${pluggyBase}/v2/items`);
+    if (nextUrl.origin !== pluggyBase || nextUrl.pathname !== '/v2/items') throw new Error('A Pluggy retornou um cursor de conexões inválido.');
+    path = `${nextUrl.pathname}${nextUrl.search}`;
+  }
+  return { results: results.filter(item => String(item.clientUserId || '') === String(clientUserId)).map(item => ({ id: item.id, connector: item.connector, connectorName: item.connectorName, status: item.status, executionStatus: item.executionStatus, products: item.products })) };
+}
 async function serveStatic(pathname, response) {
   const requested = pathname === '/' ? '/index.html' : decodeURIComponent(pathname);
   const publicFiles = new Set(['/index.html', '/gestorpro-client.js', '/styles.css', '/personal.css', '/supabase-config.js']);
@@ -161,6 +177,9 @@ export async function handleRequest(request, response) {
       const id = url.pathname.split('/').at(-1);
       if (!/^[a-zA-Z0-9-]{8,100}$/.test(id)) return json(response, 400, { error: 'Identificador de conexão inválido.' });
       return json(response, 200, await pluggy(`/items/${encodeURIComponent(id)}`));
+    }
+    if (request.method === 'GET' && url.pathname === '/api/openfinance/items') {
+      return json(response, 200, await listItemsForUser(user?.id || 'gestorpro-local-user'));
     }
     if (request.method === 'GET' && url.pathname === '/api/openfinance/accounts') {
       const itemId = url.searchParams.get('itemId') || '';
