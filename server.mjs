@@ -118,7 +118,7 @@ async function listInvestments(itemId) {
 }
 async function serveStatic(pathname, response) {
   const requested = pathname === '/' ? '/index.html' : decodeURIComponent(pathname);
-  const publicFiles = new Set(['/index.html', '/app.js', '/styles.css', '/personal.css', '/supabase-config.js']);
+  const publicFiles = new Set(['/index.html', '/gestorpro-client.js', '/styles.css', '/personal.css', '/supabase-config.js']);
   if (!publicFiles.has(requested)) return json(response, 404, { error: 'Arquivo não encontrado.' });
   if (requested === '/supabase-config.js' && (supabaseUrl || supabasePublishableKey || productionMode)) {
     const config = { supabaseUrl, supabasePublishableKey, allowedGoogleEmail, requireAuth: productionMode };
@@ -137,10 +137,16 @@ async function serveStatic(pathname, response) {
   }
 }
 
-const server = createServer(async (request, response) => {
+export async function handleRequest(request, response) {
   const url = new URL(request.url || '/', `http://${host}:${port}`);
   try {
     if (request.method === 'GET' && url.pathname === '/api/health') return json(response, 200, { ok: true });
+    if (request.method === 'GET' && url.pathname === '/api/supabase-config.js') {
+      const config = { supabaseUrl, supabasePublishableKey, allowedGoogleEmail, requireAuth: productionMode };
+      response.writeHead(200, { 'Content-Type': types['.js'], 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin' });
+      response.end(`window.GESTORPRO_CONFIG = ${JSON.stringify(config)};`);
+      return;
+    }
     if (request.method === 'GET' && url.pathname === '/api/openfinance/status') {
       return json(response, 200, { configured: Boolean(clientId && clientSecret), includeSandbox, mode: includeSandbox ? 'sandbox' : 'production' });
     }
@@ -177,9 +183,12 @@ const server = createServer(async (request, response) => {
   } catch (error) {
     return json(response, error.statusCode || 502, { error: error.message || 'Não foi possível conectar à Pluggy.' });
   }
-});
+}
 
-server.listen(port, host, () => {
-  console.log(`GestorPro: http://${host}:${port}`);
-  console.log(`Open Finance: ${includeSandbox ? 'sandbox' : 'produção'}${clientId && clientSecret ? ' (credenciais configuradas)' : ' (configure o arquivo .env)'}`);
-});
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const server = createServer(handleRequest);
+  server.listen(port, host, () => {
+    console.log(`GestorPro: http://${host}:${port}`);
+    console.log(`Open Finance: ${includeSandbox ? 'sandbox' : 'produção'}${clientId && clientSecret ? ' (credenciais configuradas)' : ' (configure o arquivo .env)'}`);
+  });
+}

@@ -37,7 +37,7 @@ Depois de validar o uso pessoal, o projeto pode evoluir para uma versão GestorP
 
 - `index.html`: estrutura e navegação.
 - `styles.css`: identidade escura, detalhes azuis e layout responsivo.
-- `app.js`: telas navegáveis, dados de demonstração e persistência local no navegador.
+- `gestorpro-client.js`: telas navegáveis, dados de demonstração e persistência local no navegador.
 - `server.mjs`: servidor local e endpoints protegidos para a integração Pluggy.
 - `.env.example`: modelo das credenciais da Pluggy; copie para `.env` e preencha localmente.
 - `package.json`: comando para iniciar o servidor local.
