@@ -82,3 +82,14 @@ A hospedagem pronta está descrita em `render.yaml`. Ela configura a aplicação
 5. No primeiro login Google, o GestorPro perguntará antes de enviar seus dados locais ao Supabase. Depois da confirmação, contas manuais, lançamentos, categorias, caixinhas e conexões Pluggy sincronizam entre aparelhos. Se houver dados locais e online divergentes, o app pede confirmação antes de mesclar ou substituir.
 
 O plano gratuito do Render desliga o serviço após 15 minutos sem tráfego e não mantém arquivos locais entre implantações; os dados do GestorPro ficam no Supabase, não no disco do Render. Pode haver uma espera na primeira abertura após o serviço dormir. Consulte as [limitações do plano gratuito](https://render.com/docs/free) e a [configuração de serviços web](https://render.com/docs/web-services).
+
+### Revisão financeira diária no Vercel
+
+O GestorPro pode gerar uma revisão automática às 9h (horário de Brasília), com comparação de gastos dos últimos 30 dias, aumentos por categoria e sugestões simples para suas metas. A rotina consulta as transações pela Pluggy, não envia descrições de compras a modelos de IA e grava somente totais, categorias e orientações. Ela só começa depois que você autorizar uma conexão Open Finance e o GestorPro sincronizar o identificador da conexão no Supabase.
+
+1. Rode `supabase/migrations/20261111_daily_financial_reviews.sql` no SQL Editor do seu projeto Supabase.
+2. No Vercel, adicione `SUPABASE_SECRET_KEY` nas variáveis de ambiente de produção usando a chave secreta do projeto Supabase. Ela tem acesso elevado e deve ficar somente no servidor; nunca a coloque em `supabase-config.js`, no navegador ou no Git. O código também aceita a chave antiga `SUPABASE_SERVICE_ROLE_KEY`.
+3. Adicione `CRON_SECRET` nas variáveis de ambiente de produção do Vercel. Use uma senha aleatória longa, não reutilizada, e não a envie pelo chat. O Vercel usará essa variável para autorizar a chamada agendada.
+4. Faça um novo deploy. A primeira revisão pode aparecer após a execução diária seguinte. Para ela começar, entre com a conta Google autorizada, conecte a instituição em **Open Finance** e deixe a sincronização do GestorPro terminar.
+
+O resumo aparece no painel **Visão geral**. As sugestões são para reflexão e organização pessoal, não aconselhamento financeiro profissional nem avaliação moral das compras. Para conferir o funcionamento antes da próxima execução, use o botão **Run** no painel de Cron Jobs do projeto Vercel; a rota exige o mesmo `CRON_SECRET` configurado no projeto.
